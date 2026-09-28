@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/property_store.dart';
 import '../models/property.dart';
+import '../services/auth_store.dart';
 import '../theme/app_colors.dart';
 import '../utils/formatters.dart';
 import '../widgets/property_card.dart';
 import '../widgets/rounded_chip.dart';
+import 'chat_screen.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   final Property property;
@@ -224,11 +226,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               color: AppColors.navy,
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () => _showContactSheet(context, current),
-                            style: ElevatedButton.styleFrom(minimumSize: const Size(120, 44)),
-                            child: const Text("Bog'lanish"),
-                          ),
+                          if (current.ownerId != AuthStore.instance.currentUser?.id)
+                            ElevatedButton(
+                              onPressed: () => _showContactSheet(context, current),
+                              style: ElevatedButton.styleFrom(minimumSize: const Size(120, 44)),
+                              child: const Text("Bog'lanish"),
+                            ),
                         ],
                       ),
                     ],
@@ -326,9 +329,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       child: ElevatedButton.icon(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Xabar oynasi tez orada qo'shiladi")),
-                          );
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => ChatScreen(
+                              otherUserId: current.ownerId,
+                              otherUserName: current.ownerName,
+                              otherAvatarUrl: current.ownerAvatarUrl,
+                              propertyId: current.id,
+                            ),
+                          ));
                         },
                         icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
                         label: const Text("Xabar"),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../data/property_store.dart';
 import '../services/auth_store.dart';
+import '../services/chat_store.dart';
 import '../theme/app_colors.dart';
 import '../widgets/property_card.dart';
 import 'add_listing_screen.dart';
+import 'conversations_screen.dart';
 import 'edit_profile_screen.dart';
 import 'login_screen.dart';
 
@@ -56,13 +58,26 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(user?.email ?? '', style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
                 const SizedBox(height: 18),
-                SizedBox(
-                  width: 200,
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EditProfileScreen())),
-                    style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(44)),
-                    child: const Text("Profilni tahrirlash"),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EditProfileScreen())),
+                        style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(44)),
+                        child: const Text("Profilni tahrirlash"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConversationsScreen())),
+                        style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(44)),
+                        icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
+                        label: const Text("Xabarlar"),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 30),
                 Align(
@@ -106,6 +121,7 @@ class ProfileScreen extends StatelessWidget {
                   onPressed: () {
                     AuthStore.instance.logout();
                     PropertyStore.instance.reset();
+                    ChatStore.instance.disconnect();
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (_) => const LoginScreen()),
                       (route) => false,

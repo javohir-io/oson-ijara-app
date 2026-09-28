@@ -38,6 +38,17 @@ class ApiClient {
         if (token != null) 'Authorization': 'Bearer $token',
       };
 
+  /// The chat WebSocket URL, derived from [ApiConfig.baseUrl] (http -> ws,
+  /// https -> wss) with the current JWT attached as a query param, since
+  /// browsers can't set custom headers on a WebSocket handshake.
+  Uri get chatWebSocketUri {
+    final httpUri = Uri.parse(ApiConfig.baseUrl);
+    final wsScheme = httpUri.scheme == 'https' ? 'wss' : 'ws';
+    return httpUri.replace(scheme: wsScheme, path: '/messages/ws', queryParameters: {
+      if (token != null) 'token': token!,
+    });
+  }
+
   dynamic _decode(http.Response response) {
     if (response.statusCode == 204 || response.body.isEmpty) {
       return null;
@@ -261,5 +272,40 @@ class ApiClient {
       },
       timeout: const Duration(seconds: 30),
     );
+  }
+
+  // ---------- Messages ----------
+
+  Future<List<dynamic>> listConversations() {
+    return _guard(() async {
+      final response = await http.get(_uri('/messages/conversations'), headers: _authHeaders);
+      return _handle(response) as List<dynamic>;
+    });
+  }
+
+  Future<List<dynamic>> getConversationWith(int userId) {
+    return _guard(() async {
+      final response = await http.get(_uri('/messages/with/$userId'), headers: _authHeaders);
+      return _handle(response) as List<dynamic>;
+    });
+  }
+
+  Future<Map<String, dynamic>> sendMessage({
+    required int receiverId,
+    required String content,
+    int? propertyId,
+  }) {
+    return _guard(() async {
+      final response = await http.post(
+        _uri('/messages'),
+        headers: _jsonHeaders,
+        body: jsonEncode({
+          'receiver_id': receiverId,
+          'content': content,
+          if (propertyId != null) 'property_id': propertyId,
+        }),
+      );
+      return _handle(response) as Map<String, dynamic>;
+    });
   }
 }

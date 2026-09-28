@@ -34,9 +34,11 @@ flutter run
   in edit mode and saves changes back to that same listing.
 - **"Parolni unutdingizmi?"** opens a reset-password dialog instead of doing nothing.
 - Real photo upload is wired up: pick images on Add Listing / Edit Profile via
-  `file_picker`, previewed as thumbnails, uploaded to the backend on save. Only
-  in-app chat still shows a "coming soon" toast, since that needs a messaging
-  backend that doesn't exist yet.
+  `file_picker`, previewed as thumbnails, uploaded to the backend on save.
+- **Real-time chat**: tapping "Xabar" on a listing opens a live chat with its
+  owner over a WebSocket (`web_socket_channel`), with a "Xabarlar" conversation
+  list reachable from Profile. Messages persist and show unread counts even
+  when the other person's offline.
 
 ## Color refresh
 - Background/fills shifted from a warm cream to a cooler ivory-blue so it doesn't
@@ -59,6 +61,9 @@ The app now talks to the OsonIjara FastAPI backend instead of in-memory mock dat
   still show the gradient placeholder.
 - Picking and uploading photos (avatar and property listings) is fully wired up
   via `file_picker` + `POST /properties/{id}/images` / `/users/me/avatar`.
+- Chat connects a WebSocket (`ChatStore`) right after login/register, derived
+  from the same `ApiConfig.baseUrl` (http → ws, https → wss automatically) —
+  no separate config needed.
 
 ### Point it at your backend
 Edit `lib/config/api_config.dart` — `ApiConfig.baseUrl` must match how your device

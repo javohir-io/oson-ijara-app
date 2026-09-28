@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../data/property_store.dart';
 import '../services/auth_store.dart';
+import '../services/chat_store.dart';
 import '../theme/app_colors.dart';
 import '../widgets/custom_text_field.dart';
 import 'main_shell.dart';
@@ -73,6 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     unawaited(PropertyStore.instance.fetchAll());
+    ChatStore.instance.connect();
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const MainShell()),
       (route) => false,
