@@ -8,14 +8,6 @@
 focused, regional take on Airbnb/property-rental apps — built with Flutter
 and a FastAPI backend, with real-time chat between renters and owners.
 
-### 🔗 [**Live demo → osonuyjoy.netlify.app**](https://osonuyjoy.netlify.app)
-### 🔗 [Backend API + docs](https://oson-ijara-backend.onrender.com/docs) · [Backend repo](https://github.com/javohir-io/oson_ijara_backend)
-
-> The backend sleeps after 15 minutes idle on its free hosting tier — give
-> the first request 10–50s to wake it up.
-
----
-
 ## Features
 
 - 🔐 Register/login with JWT auth
